@@ -1,0 +1,22 @@
+{
+  "name": "cecode",
+  "version": "1.0.0",
+  "description": "Trabalho de conclusão de curso do thiago",
+  "license": "ISC",
+  "author": "Thiago G. Costa",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.2",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.22.5",
+    "prisma": "^6.16.2"
+  }
+}

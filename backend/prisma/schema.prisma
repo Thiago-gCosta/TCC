@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoUsuario {
+  COMPLETA
+  PARCIAL
+  AUXILIAR
+}
+
+enum Tema {
+  CLARO
+  ESCURO
+  SISTEMA
+}
+
+model Usuario {
+  id            String   @id @default(uuid())
+  nome          String
+  email         String   @unique
+  senha         String
+  tipoUsuario   TipoUsuario
+  descricao     String?
+  dataCadastro  DateTime @default(now())
+  ultimoAcesso  DateTime?
+
+  historicos    Historico[]
+  favoritos     Favorito[]
+  configuracao  Configuracao?
+
+  @@map("usuarios")
+}
+
+model Historico {
+  id             String   @id @default(uuid())
+  textoOriginal  String   @db.Text
+  dataConversao  DateTime @default(now())
+
+  usuarioId      String
+  usuario        Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("historicos")
+}
+
+model Favorito {
+  id          String   @id @default(uuid())
+  titulo      String
+  texto       String   @db.Text
+  dataCriacao DateTime @default(now())
+
+  usuarioId   String
+  usuario     Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("favoritos")
+}
+
+model Configuracao {
+  id                 String @id @default(uuid())
+  velocidadeLeitura  Int    @default(1000)
+  tema               Tema   @default(SISTEMA)
+
+  usuarioId          String @unique
+  usuario            Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("configuracoes")
+}
