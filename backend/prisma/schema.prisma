@@ -11,6 +11,7 @@ enum TipoUsuario {
   COMPLETA
   PARCIAL
   AUXILIAR
+  NONE
 }
 
 enum Tema {
@@ -19,53 +20,79 @@ enum Tema {
   SISTEMA
 }
 
-model Usuario {
-  id            String   @id @default(uuid())
-  nome          String
-  email         String   @unique
-  senha         String
-  tipoUsuario   TipoUsuario
-  descricao     String?
-  dataCadastro  DateTime @default(now())
-  ultimoAcesso  DateTime?
+enum TipoConversao {
+  TEXTO
+  FAVORITO
+  HISTORICO
+}
 
-  historicos    Historico[]
-  favoritos     Favorito[]
-  configuracao  Configuracao?
+model Usuario {
+  id             String         @id @default(uuid())
+
+  nome           String
+  email          String         @unique
+  senha          String
+
+  tipoUsuario    TipoUsuario
+
+  descricao      String?        @db.VarChar(500)
+
+  ativo          Boolean        @default(true)
+
+  dataCadastro   DateTime       @default(now())
+  atualizadoEm   DateTime       @updatedAt
+  ultimoAcesso   DateTime?
+
+  historicos     Historico[]
+  favoritos      Favorito[]
+  configuracao   Configuracao?
 
   @@map("usuarios")
 }
 
 model Historico {
-  id             String   @id @default(uuid())
-  textoOriginal  String   @db.Text
-  dataConversao  DateTime @default(now())
+  id             String          @id @default(uuid())
+
+  textoOriginal  String          @db.Text
+
+  tipoConversao  TipoConversao   @default(TEXTO)
+
+  dadosESP       String?         @db.LongText
+
+  dataConversao  DateTime        @default(now())
 
   usuarioId      String
-  usuario        Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  usuario        Usuario         @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
   @@map("historicos")
 }
 
 model Favorito {
-  id          String   @id @default(uuid())
-  titulo      String
-  texto       String   @db.Text
-  dataCriacao DateTime @default(now())
+  id             String          @id @default(uuid())
 
-  usuarioId   String
-  usuario     Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  titulo         String
+
+  texto          String          @db.Text
+
+  ordem          Int?
+
+  dataCriacao    DateTime        @default(now())
+
+  usuarioId      String
+  usuario        Usuario         @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
   @@map("favoritos")
 }
 
 model Configuracao {
-  id                 String @id @default(uuid())
-  velocidadeLeitura  Int    @default(1000)
-  tema               Tema   @default(SISTEMA)
+  id                  String    @id @default(uuid())
 
-  usuarioId          String @unique
-  usuario            Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  velocidadeLeitura   Int       @default(1000)
+
+  tema                Tema      @default(SISTEMA)
+
+  usuarioId           String    @unique
+  usuario             Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
   @@map("configuracoes")
 }
