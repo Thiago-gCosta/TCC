@@ -1,0 +1,23 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+     font-family: "JetBrains Mono", monospace;
+    background: #FFF7EA;
+    color: #172033;
+}
+
+button,
+input,
+textarea,
+select {
+    font-family: inherit;
+}

@@ -21,7 +21,11 @@ class UserService {
         const usuario = await prisma.usuario.create({
             data: {
                 ...data,
-                senha: senhaCriptografada
+                senha: senhaCriptografada,
+
+                configuracao: {
+                    create: {}
+                }
             }
         });
 
@@ -32,6 +36,24 @@ class UserService {
             usuario: usuarioSemSenha
         };
 
+    }
+
+    async obterConfiguracao(id) {
+
+        const configuracao = await prisma.configuracao.findUnique({
+            where: {
+                usuarioId: id
+            }
+        });
+
+        if (!configuracao) {
+            throw new AppError(
+                "Configuração do usuário não encontrada.",
+                404
+            );
+        }
+
+        return configuracao;
     }
 
     async me(id) {
@@ -51,21 +73,29 @@ class UserService {
         return usuarioSemSenha;
 
     }
-    async findAll() {
 
+    async obterConfiguracao(id) {
+
+        const configuracao = await prisma.configuracao.findUnique({
+            where: {
+                usuarioId: id
+            }
+        });
+
+        if (!configuracao) {
+            throw new AppError(
+                "Configuração do usuário não encontrada.",
+                404
+            );
+        }
+
+        return configuracao;
     }
 
-    async findById(id) {
-
-    }
-
-    async update(id, data) {
-
-    }
-
-    async delete(id) {
-
-    }
+    async findAll() { }
+    async findById(id) { }
+    async update(id, data) { }
+    async delete(id) { }
 
 }
 

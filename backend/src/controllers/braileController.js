@@ -1,6 +1,7 @@
 const braileService = require("../services/braileService");
 const historicoService = require("../services/historicoService");
 const espService = require("../services/espService");
+const userService = require("../services/userService");
 
 const { validateBraile } = require("../validators/braileValidator");
 
@@ -12,7 +13,9 @@ class BraileController {
 
             const dados = validateBraile(req.body);
 
-            const resultado = braileService.converter(dados.texto);
+            const resultado = braileService.converter(
+                dados.texto
+            );
 
             await historicoService.criar(
                 req.user.id,
@@ -20,8 +23,17 @@ class BraileController {
                 resultado.dadosESP
             );
 
+            // Busca a configuração do usuário
+            const configuracao =
+                await userService.obterConfiguracao(
+                    req.user.id
+                );
+
+            // Envia os dados para o ESP32
             const envio = await espService.enviar(
-                resultado.dadosESP
+                resultado.dadosESP,
+                dados.modo,
+                configuracao.velocidadeLeitura
             );
 
             return res.status(200).json({
